@@ -5,6 +5,8 @@ import {
   Cinzel_Decorative,
 } from 'next/font/google'
 import './globals.css'
+import { Header } from './_components/header'
+import { Footer } from './_components/footer'
 
 const cormorant = Cormorant_Unicase({
   variable: '--font-cormorant',
@@ -45,7 +47,9 @@ export default function RootLayout({
         suppressHydrationWarning
         className="min-h-full flex flex-col border-l border-r border-white"
       >
+      <Header />
         {children}
+      <Footer />
       </body>
     </html>
   )
