@@ -48,9 +48,8 @@ export async function getRecentTracksData(): Promise<{
       artist: track.artist['#text'],
       album: track.album['#text'],
       image:
-        track.image?.find((i: { size: string }) => i.size === 'extralarge')?.[
-          '#text'
-        ] || track.image?.[2]?.['#text'],
+        track.image?.find((i: { size: string }) => i.size === 'extralarge')?.['#text'] ||
+        track.image?.[2]?.['#text'],
       url: track.url,
       nowPlaying: track['@attr']?.nowplaying === 'true',
       date: track.date?.['#text'],
@@ -78,11 +77,7 @@ export const SongStatus = ({ nowPlaying }: { nowPlaying: boolean }) => (
       </div>
     ) : (
       <div className="flex items-center gap-1.5">
-        <svg
-          className="w-3.5 h-3.5 text-gray-400"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-        >
+        <svg className="w-3.5 h-3.5 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" />
         </svg>
         <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
@@ -93,13 +88,7 @@ export const SongStatus = ({ nowPlaying }: { nowPlaying: boolean }) => (
   </div>
 )
 
-export const AlbumArtwork = ({
-  image,
-  album,
-}: {
-  image: string
-  album: string
-}) => {
+export const AlbumArtwork = ({ image, album }: { image: string; album: string }) => {
   if (!image) {
     return (
       <div className="w-29 h-29 shrink-0 bg-linear-to-br from-gray-800 to-gray-900 flex items-center justify-center shadow-md ring-1 ring-inset ring-white/10">
@@ -123,11 +112,7 @@ export const AlbumArtwork = ({
   return (
     <div className="relative w-29 h-29 shrink-0 overflow-hidden shadow-md">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={image}
-        alt={`${album} cover`}
-        className="object-cover w-full h-full"
-      />
+      <img src={image} alt={`${album} cover`} className="object-cover w-full h-full" />
       <div className="absolute inset-0 ring-1 ring-inset ring-white/10" />
     </div>
   )
@@ -135,9 +120,7 @@ export const AlbumArtwork = ({
 
 export function formatTimeAgo(uts?: string, fallbackDate?: string) {
   if (!uts) return 'Just now'
-  const diffInSeconds = Math.floor(
-    (new Date().getTime() - parseInt(uts) * 1000) / 1000,
-  )
+  const diffInSeconds = Math.floor((new Date().getTime() - parseInt(uts) * 1000) / 1000)
   if (diffInSeconds < 60) return `<1m ago`
   const diffInMinutes = Math.floor(diffInSeconds / 60)
   if (diffInMinutes < 60) return `${diffInMinutes}m ago`

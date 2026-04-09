@@ -1,9 +1,5 @@
 import type { Metadata } from 'next'
-import {
-  Cormorant_Unicase,
-  MedievalSharp,
-  Cinzel_Decorative,
-} from 'next/font/google'
+import { Cormorant_Unicase, MedievalSharp, Cinzel_Decorative } from 'next/font/google'
 import './globals.css'
 import { Header } from './_components/header'
 import { Footer } from './_components/footer'
@@ -47,9 +43,9 @@ export default function RootLayout({
         suppressHydrationWarning
         className="min-h-full flex flex-col border-l border-r border-white"
       >
-      <Header />
+        <Header />
         {children}
-      <Footer />
+        <Footer />
       </body>
     </html>
   )

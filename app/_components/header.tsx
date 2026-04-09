@@ -3,9 +3,7 @@ import Marquee from 'react-fast-marquee'
 import data from '@/file/bg_cleaned.json'
 
 export const Header = () => {
-  const englishVerses = data
-    .map((item) => item.quote.replace(/\s+/g, ' ').trim())
-    .join('  ✦  ')
+  const englishVerses = data.map((item) => item.quote.replace(/\s+/g, ' ').trim()).join('  ✦  ')
 
   return (
     <div className="w-full border-b-2 border-red-600">
@@ -16,13 +14,13 @@ export const Header = () => {
         {englishVerses}
       </Marquee>
 
-      <div className="flex flex-col pl-6 pt-6 pb-6 border-b-2 border-red-600 transition-colors duration-300">
-        <p className="md:text-6xl text-4xl font-bold font-style hover:cursor-default">
-          TreadOwl
-        </p>
-        <p className="md:text-xl text-lg font-semibold font-style hover:cursor-default">
-          [XMPLR]
-        </p>
+      <div className="flex flex-col p-6 border-b-2 border-red-600 transition-colors duration-300">
+        <Link href="/">
+          <p className="md:text-6xl text-4xl font-bold font-style hover:cursor-default">TreadOwl</p>
+          <p className="md:text-xl text-lg font-semibold font-style hover:cursor-default">
+            [XMPLR]
+          </p>
+        </Link>
       </div>
 
       <div className="border-b-2 border-amber-500 pt-1" />
