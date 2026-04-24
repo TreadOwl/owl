@@ -42,14 +42,24 @@ export async function getRecentTracksData(): Promise<{
     const tracks = data?.recenttracks?.track
     if (!tracks || tracks.length === 0) return { current: null, previous: [] }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const formatTrack = (track: any): SongData => ({
+    type LastFMTrack = {
+      name: string
+      artist: { '#text': string }
+      album: { '#text': string }
+      image?: { size: string; '#text': string }[]
+      url: string
+      '@attr'?: { nowplaying: string }
+      date?: { '#text': string; uts: string }
+    }
+
+    const formatTrack = (track: LastFMTrack): SongData => ({
       name: track.name,
       artist: track.artist['#text'],
       album: track.album['#text'],
       image:
-        track.image?.find((i: { size: string }) => i.size === 'extralarge')?.['#text'] ||
-        track.image?.[2]?.['#text'],
+        track.image?.find((i) => i.size === 'extralarge')?.['#text'] ||
+        track.image?.[2]?.['#text'] ||
+        '',
       url: track.url,
       nowPlaying: track['@attr']?.nowplaying === 'true',
       date: track.date?.['#text'],
