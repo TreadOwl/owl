@@ -69,7 +69,7 @@ export const HeroSection = async () => {
 
       <div className="w-full mt-6 flex items-center justify-center">
         <a href="https://www.last.fm/user/treadowl" target="_blank" rel="noopener noreferrer">
-          <button className="group flex relative overflow-hidden items-center justify-center min-w-[160px] py-3 bg-zinc-900/30 border border-white/5 hover:bg-zinc-800/80 transition-colors">
+          <button className="group flex relative overflow-hidden items-center justify-center min-w-[160px] py-3 bg-zinc-900/30 border border-white/5 hover:bg-zinc-800/80 transition-colors hover:cursor-pointer">
             <span className="font-medium transform transition-transform duration-300 group-hover:-translate-x-5">
               Show More
             </span>

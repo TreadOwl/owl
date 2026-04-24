@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "pf",
+      "name": "owl",
       "dependencies": {
         "lucide-react": "^1.7.0",
         "next": "16.2.1",
