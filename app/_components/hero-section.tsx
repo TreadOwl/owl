@@ -1,12 +1,14 @@
-import { HoverArrowIndicator } from '@/lib/ui/arrow'
-import { AlbumArtwork, getRecentTracksData, SongStatus, formatTimeAgo } from '@/lib/lastfm'
+import { getRecentTracksData, formatTimeAgo } from '@/lib/lastfm'
+import { AlbumArtwork } from '@/lib/ui/artwork'
+import { SongStatus } from '@/lib/ui/song-status'
+import { HoverArrowIndicator } from '@/lib/ui/hover-arrow'
 import { AutoRefresh } from '@/app/_components/auto-refresh'
 
 export const HeroSection = async () => {
   const { current: song, previous: previousSongs } = await getRecentTracksData()
 
   return (
-    <section className="w-full relative px-6 py-6">
+    <section className="w-full relative p-6">
       <AutoRefresh />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {/* Current / Last Played Song */}
@@ -56,7 +58,7 @@ export const HeroSection = async () => {
               rel="noopener noreferrer"
               className="flex justify-between items-center p-2 rounded-lg bg-zinc-900/30 border border-white/5 hover:bg-zinc-800/80 transition-colors group"
             >
-              <span className="font-medium text-white truncate pr-4 group-hover:text-white transition-colors">
+              <span className="font-medium text-white truncate pr-4">
                 {prevSong.name} - {prevSong.artist}
               </span>
               <span className="text-sm text-white whitespace-nowrap shrink-0 group-hover:text-gray-300 transition-colors">
