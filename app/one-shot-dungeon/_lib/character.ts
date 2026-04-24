@@ -336,3 +336,35 @@ export const enhancementsByClass = {
   Rogue: rogueEnhancements,
   Paladin: paladinEnhancements,
 }
+
+export function generateBaseStats(characterClass: CharacterClass): Stats {
+  const rollStat = (min: number, max: number) =>
+    Math.floor(((Math.random() + Math.random()) / 2) * (max - min + 1)) + min
+
+  const { hp, atk, def, spd } = characterClass.baseStats
+  return {
+    hp: rollStat(hp[0], hp[1]),
+    atk: rollStat(atk[0], atk[1]),
+    def: rollStat(def[0], def[1]),
+    spd: rollStat(spd[0], spd[1]),
+  }
+}
+
+export function rollEnhancement(className: string): Enhancement | null {
+  const possibleEnhancements = enhancementsByClass[className as keyof typeof enhancementsByClass]
+  if (!possibleEnhancements || possibleEnhancements.length === 0) return null
+
+  const roll = Math.random() * 100
+  let cumulative = 0
+  let selectedEnhancement = possibleEnhancements[possibleEnhancements.length - 1]
+
+  for (const e of possibleEnhancements) {
+    cumulative += e.probability
+    if (roll <= cumulative) {
+      selectedEnhancement = e
+      break
+    }
+  }
+
+  return selectedEnhancement
+}
