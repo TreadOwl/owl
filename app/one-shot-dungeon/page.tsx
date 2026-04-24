@@ -4,16 +4,32 @@ import { match } from 'ts-pattern'
 import { useState } from 'react'
 import { FlameKindling } from 'lucide-react'
 import { CharacterSelect } from './_components/character-select'
-import { type Stats, type Enhancement } from './_lib/character-class'
+import { CharacterSummary } from './_components/character-summary'
+import { ShopScreen } from './_components/shop-screen'
+import {
+  buildShop,
+  SHOP_LEVELS,
+  applyPurchasedEffects,
+  type ClassName,
+  type LockedItem,
+  type CharacterState,
+} from './_lib/shop'
 
 type GameMode =
   | { mode: 'start' }
   | { mode: 'character' }
-  | { mode: 'game'; character: { name: string; stats: Stats; effects?: Enhancement['effects'] } }
+  | { mode: 'summary'; character: CharacterState }
+  | { mode: 'shop'; character: CharacterState }
+  | { mode: 'game'; character: CharacterState }
   | { mode: 'error' }
 
 export default function OneShot() {
   const [mode, setMode] = useState<GameMode>({ mode: 'start' })
+  const [coins, setCoins] = useState(100)
+  const [lockCharges, setLockCharges] = useState(2)
+  const [extraLives, setExtraLives] = useState(0)
+  const [extraLifePurchases, setExtraLifePurchases] = useState(0)
+  const [lockedItems, setLockedItems] = useState<LockedItem[]>([])
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -38,8 +54,64 @@ export default function OneShot() {
             </div>
           ))
           .with({ mode: 'character' }, () => (
-            <CharacterSelect onSelect={(character) => setMode({ mode: 'game', character })} />
+            <CharacterSelect onSelect={(character) => setMode({ mode: 'summary', character })} />
           ))
+          .with({ mode: 'summary' }, (state) => (
+            <CharacterSummary
+              character={state.character}
+              onContinue={() => {
+                setMode({ mode: 'shop', character: state.character })
+              }}
+            />
+          ))
+          .with({ mode: 'shop' }, (state) => {
+            const builtShop = buildShop({
+              className: state.character.className as ClassName,
+              extraLifePurchases,
+              lockedItems,
+            })
+            const carriedLockedIds = builtShop.carriedLocks.map((entry) => entry.item.instanceId)
+            const carriedLockedRemaining = Object.fromEntries(
+              builtShop.carriedLocks.map((entry) => [
+                entry.item.instanceId,
+                entry.remainingAppearances,
+              ]),
+            )
+
+            return (
+              <ShopScreen
+                coins={coins}
+                lockCharges={lockCharges}
+                permanentItems={builtShop.permanent}
+                globalItems={builtShop.global}
+                classItems={builtShop.class}
+                carriedLockedIds={carriedLockedIds}
+                carriedLockedRemaining={carriedLockedRemaining}
+                onFinish={({
+                  coins: nextCoins,
+                  remainingLocks,
+                  purchasedItems,
+                  nextLockedItems,
+                  extraLifePurchasesDelta,
+                }) => {
+                  setCoins(nextCoins)
+                  setExtraLifePurchases((count) => count + extraLifePurchasesDelta)
+                  setLockCharges(remainingLocks)
+                  setLockedItems(nextLockedItems)
+
+                  const { nextCharacter, gainedExtraLives } = applyPurchasedEffects(
+                    state.character,
+                    purchasedItems,
+                  )
+                  if (gainedExtraLives > 0) {
+                    setExtraLives((lives) => lives + gainedExtraLives)
+                  }
+
+                  setMode({ mode: 'game', character: nextCharacter })
+                }}
+              />
+            )
+          })
           .with({ mode: 'game' }, (state) => (
             <div className="flex flex-col items-center justify-center p-3 gap-3 animate-in fade-in duration-500">
               <h2 className="font-old text-2xl text-amber-500">
@@ -68,7 +140,15 @@ export default function OneShot() {
                   )}
                 </div>
               )}
-              <p className="text-zinc-400 text-xl animate-pulse">Game features coming soon...</p>
+              <div className="w-full border border-zinc-800 bg-zinc-950/70 p-2 text-zinc-300 text-sm font-old flex justify-between">
+                <span>Coins Left: {coins}</span>
+                <span>Extra Lives: {extraLives}</span>
+                <span>Item Locks: {lockCharges}</span>
+              </div>
+              <p className="text-zinc-400 text-center">
+                Next shops are scheduled after levels {SHOP_LEVELS.join(', ')}.
+              </p>
+              <p className="text-amber-500 text-xl animate-pulse">Game features coming soon...</p>
             </div>
           ))
           .otherwise(() => null)}

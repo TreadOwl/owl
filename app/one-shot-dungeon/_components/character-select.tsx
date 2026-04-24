@@ -3,23 +3,17 @@
 import { useState } from 'react'
 import {
   classes,
-  enhancementsByClass,
+  generateBaseStats,
+  rollEnhancement,
   type Stats,
   type CharacterClass,
   type Enhancement,
-} from '../_lib/character-class'
+} from '../_lib/character'
+import type { CharacterState } from '../_lib/shop'
 
 const rerolls = 2
 
-function rollStat(min: number, max: number) {
-  return Math.floor(((Math.random() + Math.random()) / 2) * (max - min + 1)) + min
-}
-
-export function CharacterSelect({
-  onSelect,
-}: {
-  onSelect: (character: { name: string; stats: Stats; effects?: Enhancement['effects'] }) => void
-}) {
+export function CharacterSelect({ onSelect }: { onSelect: (character: CharacterState) => void }) {
   const [selectedClass, setSelectedClass] = useState<CharacterClass | null>(null)
   const [baseStats, setBaseStats] = useState<Stats | null>(null)
   const [enhancement, setEnhancement] = useState<Enhancement | null>(null)
@@ -34,47 +28,23 @@ export function CharacterSelect({
 
   const handleConfirmClass = () => {
     if (!selectedClass) return
-    const { hp, atk, def, spd } = selectedClass.baseStats
-    setBaseStats({
-      hp: rollStat(hp[0], hp[1]),
-      atk: rollStat(atk[0], atk[1]),
-      def: rollStat(def[0], def[1]),
-      spd: rollStat(spd[0], spd[1]),
-    })
+    setBaseStats(generateBaseStats(selectedClass))
   }
 
   const handleEnhance = () => {
     if (!selectedClass || !baseStats) return
 
-    const possibleEnhancements =
-      enhancementsByClass[selectedClass.name as keyof typeof enhancementsByClass]
-
-    if (!possibleEnhancements || possibleEnhancements.length === 0) return
-
-    const roll = Math.random() * 100
-    let cumulative = 0
-    let selectedEnhancement = possibleEnhancements[possibleEnhancements.length - 1]
-
-    for (const e of possibleEnhancements) {
-      cumulative += e.probability
-      if (roll <= cumulative) {
-        selectedEnhancement = e
-        break
-      }
+    const chosenEnhancement = rollEnhancement(selectedClass.name)
+    if (chosenEnhancement) {
+      setEnhancement(chosenEnhancement)
     }
-
-    setEnhancement(selectedEnhancement)
   }
 
   const handleReroll = () => {
     if (remainingRerolls <= 0) return
     setRemainingRerolls((r) => r - 1)
 
-    if (enhancement) {
-      handleEnhance()
-    } else {
-      handleConfirmClass()
-    }
+    handleEnhance()
   }
 
   const generatedStats = baseStats
@@ -90,6 +60,7 @@ export function CharacterSelect({
     if (selectedClass && generatedStats) {
       onSelect({
         name: enhancement ? enhancement.name : selectedClass.name,
+        className: selectedClass.name,
         stats: generatedStats,
         effects: enhancement?.effects,
       })
@@ -207,25 +178,12 @@ export function CharacterSelect({
                   </button>
                 </>
               ) : generatedStats ? (
-                <>
-                  <button
-                    disabled={remainingRerolls <= 0}
-                    className={`font-old text-2xl w-full flex flex-1 items-center justify-center border-2 border-b-4 p-2 transition-none uppercase tracking-widest ${
-                      remainingRerolls <= 0
-                        ? 'border-zinc-800 bg-zinc-900 text-zinc-600 cursor-not-allowed'
-                        : 'border-blue-900 bg-blue-950 text-blue-500 hover:bg-blue-900 hover:text-white cursor-pointer'
-                    }`}
-                    onClick={handleReroll}
-                  >
-                    Re-roll ({remainingRerolls})
-                  </button>
-                  <button
-                    className="font-old text-2xl w-full flex flex-1 items-center justify-center border-2 border-b-4 border-amber-900 bg-amber-950 text-amber-500 p-2 hover:bg-amber-900 hover:text-white cursor-pointer transition-none uppercase tracking-widest"
-                    onClick={handleEnhance}
-                  >
-                    Enhance
-                  </button>
-                </>
+                <button
+                  className="font-old text-2xl w-full flex items-center justify-center border-2 border-b-4 border-amber-900 bg-amber-950 text-amber-500 p-2 hover:bg-amber-900 hover:text-white cursor-pointer transition-none uppercase tracking-widest"
+                  onClick={handleEnhance}
+                >
+                  Enhance
+                </button>
               ) : (
                 <button
                   className="font-old text-2xl w-full flex items-center justify-center border-2 border-b-4 border-red-900 bg-red-950 text-red-500 p-2 hover:bg-red-900 hover:text-white cursor-pointer transition-none uppercase tracking-widest"
