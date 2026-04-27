@@ -27,7 +27,7 @@ export function ContactForm() {
         required
         className="w-full border-b border-white/10 outline-none"
       />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 xl:grid-cols-2 gap-2">
         <input
           name="email"
           placeholder="Email (optional)"

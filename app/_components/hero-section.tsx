@@ -10,7 +10,7 @@ export const HeroSection = async () => {
   return (
     <section className="w-full relative p-6">
       <AutoRefresh />
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+      <div className="grid grid-cols gap-6 items-start">
         {/* Current / Last Played Song */}
         <div className="flex justify-center items-center w-full">
           {song && (
