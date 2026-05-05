@@ -45,10 +45,7 @@ export const HeroSection = async () => {
           <style>{`
             .scrollbar-thin::-webkit-scrollbar { width: 4px; }
             .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
-            .scrollbar-thin::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 4px; }
-            @media (prefers-color-scheme: dark) {
-              .scrollbar-thin::-webkit-scrollbar-thumb { background: #3f3f46; }
-            }
+            .scrollbar-thin::-webkit-scrollbar-thumb { background: #3f3f46; }
           `}</style>
           {previousSongs.map((prevSong, i) => (
             <a

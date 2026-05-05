@@ -25,6 +25,9 @@ const cinzel = Cinzel_Decorative({
 export const metadata: Metadata = {
   title: 'TreadOwl',
   description: 'XMPLR - owl, trd',
+  icons: {
+    icon: '/logo.svg',
+  },
 }
 
 export default function RootLayout({

@@ -1,7 +1,7 @@
 import { ChatSection } from './_components/chat-section'
 import { HeroSection } from './_components/hero-section'
 import { OsdSection } from './_components/osd-section'
-import { Spacer } from './_components/spacer'
+import { SpacerRed } from './_components/spacer'
 
 export default function Home() {
   return (
@@ -10,7 +10,7 @@ export default function Home() {
         <HeroSection />
         <ChatSection />
       </div>
-      <Spacer />
+      <SpacerRed />
       <OsdSection />
     </div>
   )

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "format": "prettier --write --ignore-path .gitignore \"lib/**/*.{ts,tsx,js}\" \"app/**/*.{ts,tsx,js}\"",
+    "format": "prettier --write --ignore-path .gitignore 'lib/**/*.{ts,tsx}' 'app/**/*.{ts,tsx}'",
     "clean": "rimraf node_modules **/*/node_modules"
   },
   "packageManager": "bun@1.3.11",
