@@ -1,15 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  classes,
-  generateBaseStats,
-  rollEnhancement,
-  type Stats,
-  type CharacterClass,
-  type Enhancement,
-} from '../_lib/character'
+import { classes, generateBaseStats, rollEnhancement, STAT_META, type Stats, type CharacterClass, type Enhancement } from '../_lib/character'
 import type { CharacterState } from '../_lib/shop'
+import { OsdPrimaryButton } from './osd-primary-button'
+import { CharacterEffectsDisplay } from './character-effects-display'
 
 const rerolls = 2
 
@@ -49,10 +44,10 @@ export function CharacterSelect({ onSelect }: { onSelect: (character: CharacterS
 
   const generatedStats = baseStats
     ? {
-        hp: baseStats.hp + (enhancement?.statBonus || 0),
-        atk: baseStats.atk + (enhancement?.statBonus || 0),
-        def: baseStats.def + (enhancement?.statBonus || 0),
-        spd: baseStats.spd + (enhancement?.statBonus || 0),
+        hp: baseStats.hp + (enhancement?.statBonus ?? 0),
+        atk: baseStats.atk + (enhancement?.statBonus ?? 0),
+        def: baseStats.def + (enhancement?.statBonus ?? 0),
+        spd: baseStats.spd + (enhancement?.statBonus ?? 0),
       }
     : null
 
@@ -72,9 +67,7 @@ export function CharacterSelect({ onSelect }: { onSelect: (character: CharacterS
       {/* Left Column: Vertical List of Classes */}
       {!baseStats && (
         <div className="flex flex-col gap-3 w-full sm:w-1/3">
-          <h2 className="font-old text-xl text-zinc-500 px-2 uppercase tracking-widest border-b-2 border-zinc-800 pb-2">
-            Classes
-          </h2>
+          <h2 className="font-old text-xl text-zinc-500 px-2 uppercase tracking-widest border-b-2 border-zinc-800 pb-2">Classes</h2>
           <div className="flex flex-col gap-3">
             {classes.map((c) => (
               <button
@@ -108,19 +101,14 @@ export function CharacterSelect({ onSelect }: { onSelect: (character: CharacterS
             </h2>
 
             <div className="flex-1 flex flex-col font-old text-lg text-zinc-400">
-              {[
-                { label: 'HP', key: 'hp', color: 'text-green-500' },
-                { label: 'ATK', key: 'atk', color: 'text-red-600' },
-                { label: 'DEF', key: 'def', color: 'text-blue-500' },
-                { label: 'SPD', key: 'spd', color: 'text-yellow-500' },
-              ].map(({ label, key, color }) => (
+              {STAT_META.map(({ label, key, color }) => (
                 <div key={label} className="flex justify-between items-center">
                   <span className="font-bold tracking-widest text-zinc-300">{label}</span>
                   <span className="font-bold text-white text-xl">
                     {generatedStats ? (
-                      <span className={color}>{generatedStats[key as keyof Stats]}</span>
+                      <span className={color}>{generatedStats[key]}</span>
                     ) : (
-                      `${selectedClass.baseStats[key as keyof Stats][0]} - ${selectedClass.baseStats[key as keyof Stats][1]}`
+                      `${selectedClass.baseStats[key][0]} - ${selectedClass.baseStats[key][1]}`
                     )}
                   </span>
                 </div>
@@ -136,21 +124,14 @@ export function CharacterSelect({ onSelect }: { onSelect: (character: CharacterS
                 <p className="font-bold tracking-widest text-zinc-300">
                   <span>Description</span>
                 </p>
-                <p className="text-white">
-                  {enhancement ? enhancement.description : selectedClass.description}
-                </p>
+                <p className="text-white">{enhancement ? enhancement.description : selectedClass.description}</p>
               </div>
 
-              {enhancement && enhancement.effects && (
+              {enhancement?.effects && (
                 <div className="pt-2 flex justify-between items-center">
                   <span className="font-bold tracking-widest text-amber-500">Bonus Effects</span>
                   <span className="font-bold text-amber-500 text-xl flex flex-col items-end">
-                    {enhancement.effects.doubleDamageChance !== undefined && (
-                      <span>Double-Damage: {enhancement.effects.doubleDamageChance * 100}%</span>
-                    )}
-                    {enhancement.effects.extraAttackChance !== undefined && (
-                      <span>Extra-Attack: {enhancement.effects.extraAttackChance * 100}%</span>
-                    )}
+                    <CharacterEffectsDisplay effects={enhancement.effects} />
                   </span>
                 </div>
               )}
@@ -170,12 +151,9 @@ export function CharacterSelect({ onSelect }: { onSelect: (character: CharacterS
                   >
                     Re-roll ({remainingRerolls})
                   </button>
-                  <button
-                    className="font-old text-2xl w-full flex-1 flex items-center justify-center border-2 border-b-4 border-white bg-white text-black p-2 hover:bg-zinc-300 hover:border-zinc-300 cursor-pointer transition-none uppercase tracking-widest"
-                    onClick={handleContinue}
-                  >
+                  <OsdPrimaryButton onClick={handleContinue} className="flex-1">
                     Continue
-                  </button>
+                  </OsdPrimaryButton>
                 </>
               ) : generatedStats ? (
                 <button

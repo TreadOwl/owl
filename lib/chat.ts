@@ -26,10 +26,7 @@ export async function sendMessage(formData: FormData) {
 }
 
 export async function ChatWall() {
-  const { data: messages, error } = await supabase
-    .from('messages')
-    .select('*')
-    .order('created_at', { ascending: false })
+  const { data: messages, error } = await supabase.from('messages').select('*').order('created_at', { ascending: false }).limit(50)
 
   if (error) {
     throw error

@@ -32,7 +32,7 @@ export async function getRecentTracksData(): Promise<{
   }
   try {
     const res = await fetch(
-      `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LASTFM_USER}&api_key=${LASTFM_API_KEY}&format=json&limit=21`,
+      `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LASTFM_USER}&api_key=${LASTFM_API_KEY}&format=json&limit=21`,
       { next: { revalidate: 15 } },
     )
     if (!res.ok) return { current: null, previous: [] }
@@ -54,10 +54,7 @@ export async function getRecentTracksData(): Promise<{
       name: track.name,
       artist: track.artist['#text'],
       album: track.album['#text'],
-      image:
-        track.image?.find((i) => i.size === 'extralarge')?.['#text'] ||
-        track.image?.[2]?.['#text'] ||
-        '',
+      image: track.image?.find((i) => i.size === 'extralarge')?.['#text'] || track.image?.[2]?.['#text'] || '',
       url: track.url,
       nowPlaying: track['@attr']?.nowplaying === 'true',
       date: track.date?.['#text'],

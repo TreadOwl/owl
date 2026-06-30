@@ -11,7 +11,6 @@ export const HeroSection = async () => {
     <section className="w-full relative p-6">
       <AutoRefresh />
       <div className="grid grid-cols gap-6 items-start">
-        {/* Current / Last Played Song */}
         <div className="flex justify-center items-center w-full">
           {song && (
             <a
@@ -25,9 +24,7 @@ export const HeroSection = async () => {
               <div className="flex flex-col min-w-0 z-10 w-full">
                 <SongStatus nowPlaying={song.nowPlaying} />
 
-                <h3 className="font-semibold text-xl text-white truncate max-w-full leading-tight">
-                  {song.name}
-                </h3>
+                <h3 className="font-semibold text-xl text-white truncate max-w-full leading-tight">{song.name}</h3>
                 <p className="text-gray-500 truncate mt-0.5">
                   {song.artist}
                   <br />
@@ -40,13 +37,7 @@ export const HeroSection = async () => {
           )}
         </div>
 
-        {/* Previously Played List */}
-        <div className="flex flex-col h-[250px] overflow-y-auto w-full space-y-2 scrollbar-thin">
-          <style>{`
-            .scrollbar-thin::-webkit-scrollbar { width: 4px; }
-            .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
-            .scrollbar-thin::-webkit-scrollbar-thumb { background: #3f3f46; }
-          `}</style>
+        <div className="flex flex-col h-62.5 overflow-y-auto w-full space-y-2 scrollbar-thin">
           {previousSongs.map((prevSong, i) => (
             <a
               key={`prev-${prevSong.uts || i}`}
@@ -67,13 +58,14 @@ export const HeroSection = async () => {
       </div>
 
       <div className="w-full mt-6 flex items-center justify-center">
-        <a href="https://www.last.fm/user/treadowl" target="_blank" rel="noopener noreferrer">
-          <button className="group flex relative overflow-hidden items-center justify-center min-w-[160px] py-3 bg-zinc-900/30 border border-white/5 hover:bg-zinc-800/80 transition-colors hover:cursor-pointer">
-            <span className="font-medium transform transition-transform duration-300 group-hover:-translate-x-5">
-              Show More
-            </span>
-            <HoverArrowIndicator />
-          </button>
+        <a
+          href="https://www.last.fm/user/treadowl"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex relative overflow-hidden items-center justify-center min-w-40 py-3 bg-zinc-900/30 border border-white/5 hover:bg-zinc-800/80 transition-colors"
+        >
+          <span className="font-medium transform transition-transform duration-300 group-hover:-translate-x-5">Show More</span>
+          <HoverArrowIndicator />
         </a>
       </div>
     </section>

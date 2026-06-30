@@ -1,14 +1,10 @@
 'use client'
 
+import { STAT_META } from '../_lib/character'
 import type { CharacterState } from '../_lib/shop'
+import { OsdPrimaryButton } from './osd-primary-button'
 
-export function CharacterSummary({
-  character,
-  onContinue,
-}: {
-  character: CharacterState
-  onContinue: () => void
-}) {
+export function CharacterSummary({ character, onContinue }: { character: CharacterState; onContinue: () => void }) {
   return (
     <div className="flex flex-col p-4 gap-3 w-full animate-in fade-in duration-300">
       <h2 className="font-old text-3xl text-amber-500 text-center">Character Summary</h2>
@@ -25,22 +21,12 @@ export function CharacterSummary({
       </div>
 
       <div className="grid grid-cols-4 gap-3 font-old">
-        <div className="border border-zinc-700 bg-zinc-950/70 p-3">
-          <p className="text-zinc-500 text-xs">HP</p>
-          <p className="text-2xl text-green-500">{character.stats.hp}</p>
-        </div>
-        <div className="border border-zinc-700 bg-zinc-950/70 p-3">
-          <p className="text-zinc-500 text-xs">ATK</p>
-          <p className="text-2xl text-red-500">{character.stats.atk}</p>
-        </div>
-        <div className="border border-zinc-700 bg-zinc-950/70 p-3">
-          <p className="text-zinc-500 text-xs">DEF</p>
-          <p className="text-2xl text-blue-500">{character.stats.def}</p>
-        </div>
-        <div className="border border-zinc-700 bg-zinc-950/70 p-3">
-          <p className="text-zinc-500 text-xs">SPD</p>
-          <p className="text-2xl text-yellow-500">{character.stats.spd}</p>
-        </div>
+        {STAT_META.map(({ label, key, color }) => (
+          <div key={label} className="border border-zinc-700 bg-zinc-950/70 p-3">
+            <p className="text-zinc-500 text-xs">{label}</p>
+            <p className={`text-2xl ${color}`}>{character.stats[key]}</p>
+          </div>
+        ))}
       </div>
 
       <div className="border border-amber-900 bg-amber-950/40 p-3 text-amber-300 font-old text-sm">
@@ -48,12 +34,7 @@ export function CharacterSummary({
         <p>Effective ATK = ATK x 1.5</p>
       </div>
 
-      <button
-        className="font-old text-2xl w-full flex items-center justify-center border-2 border-b-4 border-white bg-white text-black p-2 hover:bg-zinc-300 hover:border-zinc-300 cursor-pointer transition-none uppercase tracking-widest"
-        onClick={onContinue}
-      >
-        Continue to Shop
-      </button>
+      <OsdPrimaryButton onClick={onContinue}>Continue to Shop</OsdPrimaryButton>
     </div>
   )
 }

@@ -18,3 +18,12 @@ body {
   color: var(--foreground);
   font-family: var(--font-cormorant), var(--font-medieval), var(--font-cinzel);
 }
+
+.scrollbar-thin::-webkit-scrollbar { width: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: #3f3f46; }
+
+@keyframes music-bar {
+  0% { transform: scaleY(0.3); }
+  100% { transform: scaleY(1); }
+}

@@ -1,6 +1,6 @@
-import type { Stats, Enhancement } from './character'
+import type { Stats, Enhancement, ClassName } from './character'
 
-export type ClassName = 'Barbarian' | 'Warlock' | 'Knight' | 'Huntsman' | 'Rogue' | 'Paladin'
+export type { ClassName }
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'legendary' | 'mythic'
 export type ShopItemSource = 'permanent' | 'global' | 'class'
 
@@ -32,6 +32,8 @@ export type LockedItem = {
 }
 
 export const SHOP_LEVELS = [2, 4, 6, 8, 9] as const
+export const MAX_LOCK_APPEARANCES = 2
+export const EXTRA_LIFE_INSTANCE_ID = 'permanent-extra-life'
 const rarityWeights: Record<Rarity, number> = {
   common: 55,
   uncommon: 24,
@@ -609,7 +611,7 @@ export function getPermanentItems(extraLifePurchases: number): ShopItem[] {
       effect: { type: 'heal', amount: 15 },
     },
     {
-      instanceId: 'permanent-extra-life',
+      instanceId: EXTRA_LIFE_INSTANCE_ID,
       source: 'permanent',
       name: 'Extra Life',
       description: 'Passive: gain one extra life for this run.',
@@ -620,12 +622,7 @@ export function getPermanentItems(extraLifePurchases: number): ShopItem[] {
   ]
 }
 
-function generatePoolItems(
-  pool: Array<Omit<Item, 'price'>>,
-  count: number,
-  source: 'global' | 'class',
-  usedNames: Set<string>,
-) {
+function generatePoolItems(pool: Array<Omit<Item, 'price'>>, count: number, source: 'global' | 'class', usedNames: Set<string>) {
   const results: ShopItem[] = []
   let guard = 0
   while (results.length < count && guard < 60) {
@@ -646,34 +643,17 @@ function generatePoolItems(
   return results
 }
 
-export function buildShop(args: {
-  className: ClassName
-  extraLifePurchases: number
-  lockedItems: LockedItem[]
-}) {
+export function buildShop(args: { className: ClassName; extraLifePurchases: number; lockedItems: LockedItem[] }) {
   const { className, extraLifePurchases, lockedItems } = args
   const activeLocks = lockedItems.filter((lock) => lock.remainingAppearances > 0)
 
   const lockedGlobal = activeLocks.filter((item) => item.category === 'global').slice(0, 3)
   const lockedClass = activeLocks.filter((item) => item.category === 'class').slice(0, 2)
 
-  const usedNames = new Set<string>([
-    ...lockedGlobal.map((entry) => entry.item.name),
-    ...lockedClass.map((entry) => entry.item.name),
-  ])
+  const usedNames = new Set<string>([...lockedGlobal.map((entry) => entry.item.name), ...lockedClass.map((entry) => entry.item.name)])
 
-  const globalRolled = generatePoolItems(
-    globalItemPool,
-    3 - lockedGlobal.length,
-    'global',
-    usedNames,
-  )
-  const classRolled = generatePoolItems(
-    classItemPool[className],
-    2 - lockedClass.length,
-    'class',
-    usedNames,
-  )
+  const globalRolled = generatePoolItems(globalItemPool, 3 - lockedGlobal.length, 'global', usedNames)
+  const classRolled = generatePoolItems(classItemPool[className], 2 - lockedClass.length, 'class', usedNames)
 
   return {
     permanent: getPermanentItems(extraLifePurchases),

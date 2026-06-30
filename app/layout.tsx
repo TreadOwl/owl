@@ -24,7 +24,7 @@ const cinzel = Cinzel_Decorative({
 
 export const metadata: Metadata = {
   title: 'TreadOwl',
-  description: 'XMPLR - owl, trd',
+  description: '[XMPLR]TreadOwl | owl/trd',
   icons: {
     icon: '/logo.svg',
   },
@@ -42,10 +42,7 @@ export default function RootLayout({
       className={`${cormorant.variable} ${medieval.variable} ${cinzel.variable}
       max-w-7xl mx-auto h-full antialiased`}
     >
-      <body
-        suppressHydrationWarning
-        className="min-h-full flex flex-col border-l border-r border-white"
-      >
+      <body suppressHydrationWarning className="min-h-full flex flex-col border-l border-r border-white">
         <Header />
         {children}
         <Footer />

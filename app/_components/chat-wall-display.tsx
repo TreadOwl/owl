@@ -6,19 +6,13 @@ export async function ChatWallDisplay() {
 
   return (
     <div className="flex flex-col max-h-[243px] overflow-y-auto w-full space-y-2 scrollbar-thin">
-      <style>{`
-        .scrollbar-thin::-webkit-scrollbar { width: 4px; }
-        .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
-        .scrollbar-thin::-webkit-scrollbar-thumb { background: #3f3f46; }
-      `}</style>
-      {messages?.length === 0 && (
-        <p className="flex justify-center animate-pulse">No messages yet!</p>
-      )}
-      {messages?.map((msg) =>
-        msg.website ? (
+      {messages?.length === 0 && <p className="flex justify-center animate-pulse">No messages yet!</p>}
+      {messages?.map((msg) => {
+        const websiteHref = msg.website ? (/^https?:\/\//i.test(msg.website) ? msg.website : `https://${msg.website}`) : null
+        return msg.website ? (
           <Link
             key={msg.id}
-            href={`http://${msg.website}`}
+            href={websiteHref!}
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 rounded-lg bg-zinc-900/30 border border-white/5 hover:bg-zinc-800/80 transition-colors group"
@@ -32,10 +26,7 @@ export async function ChatWallDisplay() {
             </div>
           </Link>
         ) : (
-          <div
-            key={msg.id}
-            className="p-2 rounded-lg bg-zinc-900/30 border border-white/5 hover:bg-zinc-800/80 transition-colors group"
-          >
+          <div key={msg.id} className="p-2 rounded-lg bg-zinc-900/30 border border-white/5 hover:bg-zinc-800/80 transition-colors group">
             <p className="font-medium text-lg text-white">{msg.message}</p>
 
             <div className="text-sm text-white group-hover:text-gray-300">
@@ -43,8 +34,8 @@ export async function ChatWallDisplay() {
               {msg.email && <span className="ml-4 group-hover:underline">{msg.email}</span>}
             </div>
           </div>
-        ),
-      )}
+        )
+      })}
     </div>
   )
 }

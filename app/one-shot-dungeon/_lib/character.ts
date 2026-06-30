@@ -5,6 +5,15 @@ export type Stats = {
   spd: number
 }
 
+export const STAT_META: { label: string; key: keyof Stats; color: string }[] = [
+  { label: 'HP', key: 'hp', color: 'text-green-500' },
+  { label: 'ATK', key: 'atk', color: 'text-red-600' },
+  { label: 'DEF', key: 'def', color: 'text-blue-500' },
+  { label: 'SPD', key: 'spd', color: 'text-yellow-500' },
+]
+
+export type ClassName = 'Barbarian' | 'Warlock' | 'Knight' | 'Huntsman' | 'Rogue' | 'Paladin'
+
 export type CharacterClass = {
   name: string
   description: string
@@ -338,8 +347,7 @@ export const enhancementsByClass = {
 }
 
 export function generateBaseStats(characterClass: CharacterClass): Stats {
-  const rollStat = (min: number, max: number) =>
-    Math.floor(((Math.random() + Math.random()) / 2) * (max - min + 1)) + min
+  const rollStat = (min: number, max: number) => Math.floor(((Math.random() + Math.random()) / 2) * (max - min + 1)) + min
 
   const { hp, atk, def, spd } = characterClass.baseStats
   return {
@@ -356,15 +364,11 @@ export function rollEnhancement(className: string): Enhancement | null {
 
   const roll = Math.random() * 100
   let cumulative = 0
-  let selectedEnhancement = possibleEnhancements[possibleEnhancements.length - 1]
 
   for (const e of possibleEnhancements) {
     cumulative += e.probability
-    if (roll <= cumulative) {
-      selectedEnhancement = e
-      break
-    }
+    if (roll <= cumulative) return e
   }
 
-  return selectedEnhancement
+  return possibleEnhancements[possibleEnhancements.length - 1]
 }

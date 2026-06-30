@@ -2,12 +2,7 @@ export const AlbumArtwork = ({ image, album }: { image: string; album: string })
   if (!image) {
     return (
       <div className="w-29 h-29 shrink-0 bg-linear-to-br from-gray-800 to-gray-900 flex items-center justify-center shadow-md ring-1 ring-inset ring-white/10">
-        <svg
-          className="w-8 h-8 text-gray-500"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
+        <svg className="w-8 h-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"

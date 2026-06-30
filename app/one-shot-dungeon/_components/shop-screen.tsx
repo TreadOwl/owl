@@ -1,7 +1,8 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { getRarityBadgeColor, type LockedItem, SHOP_LEVELS, type ShopItem } from '../_lib/shop'
+import { getRarityBadgeColor, type LockedItem, SHOP_LEVELS, MAX_LOCK_APPEARANCES, EXTRA_LIFE_INSTANCE_ID, type ShopItem } from '../_lib/shop'
+import { OsdPrimaryButton } from './osd-primary-button'
 
 type ShopItemState = {
   item: ShopItem
@@ -60,10 +61,7 @@ export function ShopScreen({
     })),
   ])
 
-  const purchasedItems = useMemo(
-    () => itemState.filter((entry) => entry.purchased).map((entry) => entry.item),
-    [itemState],
-  )
+  const purchasedItems = useMemo(() => itemState.filter((entry) => entry.purchased).map((entry) => entry.item), [itemState])
 
   const handleBuy = (target: ShopItem) => {
     const current = itemState.find((entry) => entry.item.instanceId === target.instanceId)
@@ -74,17 +72,11 @@ export function ShopScreen({
       setAvailableLocks((locks) => Math.min(lockCharges, locks + 1))
     }
 
-    if (target.name === 'Extra Life') {
+    if (target.instanceId === EXTRA_LIFE_INSTANCE_ID) {
       setExtraLifePurchasesDelta((count) => count + 1)
     }
 
-    setItemState((prev) =>
-      prev.map((entry) =>
-        entry.item.instanceId === target.instanceId
-          ? { ...entry, purchased: true, locked: false }
-          : entry,
-      ),
-    )
+    setItemState((prev) => prev.map((entry) => (entry.item.instanceId === target.instanceId ? { ...entry, purchased: true, locked: false } : entry)))
   }
 
   const toggleLock = (target: ShopItem) => {
@@ -95,19 +87,11 @@ export function ShopScreen({
 
     if (current.locked) {
       setAvailableLocks((locks) => locks + 1)
-      setItemState((prev) =>
-        prev.map((entry) =>
-          entry.item.instanceId === target.instanceId ? { ...entry, locked: false } : entry,
-        ),
-      )
+      setItemState((prev) => prev.map((entry) => (entry.item.instanceId === target.instanceId ? { ...entry, locked: false } : entry)))
     } else {
       if (availableLocks <= 0) return
       setAvailableLocks((locks) => locks - 1)
-      setItemState((prev) =>
-        prev.map((entry) =>
-          entry.item.instanceId === target.instanceId ? { ...entry, locked: true } : entry,
-        ),
-      )
+      setItemState((prev) => prev.map((entry) => (entry.item.instanceId === target.instanceId ? { ...entry, locked: true } : entry)))
     }
   }
 
@@ -123,10 +107,10 @@ export function ShopScreen({
         nextLockedItems.push({
           item: entry.item,
           category,
-          remainingAppearances: 2,
+          remainingAppearances: MAX_LOCK_APPEARANCES,
         })
       } else if (entry.carriedLock) {
-        const nextRemaining = (carriedLockedRemaining[entry.item.instanceId] ?? 2) - 1
+        const nextRemaining = (carriedLockedRemaining[entry.item.instanceId] ?? MAX_LOCK_APPEARANCES) - 1
         if (nextRemaining > 0) {
           nextLockedItems.push({
             item: entry.item,
@@ -149,28 +133,20 @@ export function ShopScreen({
   const renderItemCard = (entry: ShopItemState) => {
     const rarityStyle = getRarityBadgeColor(entry.item.rarity)
     const canAfford = localCoins >= entry.item.price
-    const canLockOrUnlock =
-      !entry.purchased && entry.item.source !== 'permanent' && (entry.locked || availableLocks > 0)
+    const canLockOrUnlock = !entry.purchased && entry.item.source !== 'permanent' && (entry.locked || availableLocks > 0)
 
     return (
-      <div
-        key={entry.item.instanceId}
-        className="border-2 border-zinc-800 bg-black p-3 flex flex-col gap-2"
-      >
+      <div key={entry.item.instanceId} className="border-2 border-zinc-800 bg-black p-3 flex flex-col gap-2">
         <div className="flex items-start justify-between gap-2">
           <p className="font-old text-lg text-white">{entry.item.name}</p>
-          <span className={`font-old text-xs uppercase border px-2 py-0.5 ${rarityStyle}`}>
-            {entry.item.rarity}
-          </span>
+          <span className={`font-old text-xs uppercase border px-2 py-0.5 ${rarityStyle}`}>{entry.item.rarity}</span>
         </div>
         <p className="text-zinc-400 text-sm min-h-10">{entry.item.description}</p>
         <div className="flex items-center justify-between">
           <span className="font-old text-amber-400">{entry.item.price}g</span>
           <span className="text-xs uppercase text-zinc-500">{entry.item.source}</span>
         </div>
-        {entry.locked && (
-          <span className="text-xs text-cyan-400 font-old">Locked for next shop</span>
-        )}
+        {entry.locked && <span className="text-xs text-cyan-400 font-old">Locked for next shop</span>}
         {entry.purchased && <span className="text-xs text-green-400 font-old">Purchased</span>}
         <div className="grid grid-cols-2 gap-2 pt-1">
           <button
@@ -215,26 +191,14 @@ export function ShopScreen({
       </div>
 
       <p className="text-zinc-400 text-sm">
-        Shop appears at levels: {SHOP_LEVELS.join(', ')}. Locked items carry up to 2 shop
-        appearances.
+        Shop appears at levels: {SHOP_LEVELS.join(', ')}. Locked items carry up to {MAX_LOCK_APPEARANCES} shop appearances.
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {itemState.slice(0, 2).map(renderItemCard)}
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-        {itemState.slice(2, 5).map(renderItemCard)}
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {itemState.slice(5, 7).map(renderItemCard)}
-      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">{itemState.slice(0, 2).map(renderItemCard)}</div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">{itemState.slice(2, 5).map(renderItemCard)}</div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">{itemState.slice(5, 7).map(renderItemCard)}</div>
 
-      <button
-        onClick={handleProceed}
-        className="font-old text-2xl w-full flex items-center justify-center border-2 border-b-4 border-white bg-white text-black p-2 hover:bg-zinc-300 hover:border-zinc-300 cursor-pointer transition-none uppercase tracking-widest"
-      >
-        Proceed to Dungeon
-      </button>
+      <OsdPrimaryButton onClick={handleProceed}>Proceed to Dungeon</OsdPrimaryButton>
     </div>
   )
 }
